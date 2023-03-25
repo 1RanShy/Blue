@@ -3,9 +3,9 @@
 
 using namespace std;
 
-void sendByte(unsigned int x)
+void sendByte(unsigned int x, char c)
 {
-    serWriteByte(x, 'A');
+    serWriteByte(x, c);
     gpioSleep(PI_TIME_RELATIVE, 0, 500000); // sleep for 1.5
 }
 
@@ -15,25 +15,27 @@ void readByte(unsigned int x)
     {
 
         cout << serReadByte(x) << endl;
-        while (serDataAvailable(x)); // 有数据读就读直到读完
+        while (serDataAvailable(x))
+            ; // 有数据读就读直到读完
     }
     /*
      * add delay is ok. Because read also need time.
      */
 }
 
-void writeBytes(unsigned int x,char *buff,unsigned char count)
+void writeBytes(unsigned int x, char *buff, unsigned char count)
 {
-    serWrite(x,buff,count);
+    serWrite(x, buff, count);
 }
 
-void readBytes(unsigned int x,char *buff,unsigned char count)
+void readBytes(unsigned int x, char *buff, unsigned char count)
 {
-    if(count)
+    if (count)
     {
-        serRead(x,buff,count);
-        while (serDataAvailable(x)); // 有数据读就读直到读完
-        cout << buff[0] << "  " << buff[1] << "  " << buff[2] << "  " << endl;
+        serRead(x, buff, count);
+        while (serDataAvailable(x))
+            ; // 有数据读就读直到读完
+        cout << buff[0] << endl;
     }
 }
 
@@ -59,11 +61,11 @@ int main(void)
     {
         cout << "Success to Open" << endl;
     }
-    char buff[10] = {1,2,3,4,5};
+    char buff[10] = {1, 2, 3, 4, 5};
     while (1)
     {
-        readBytes(x,buff,serDataAvailable(x)); //output character HEX/ASCII
-        sendByte(x);
+        readBytes(x, buff, serDataAvailable(x)); // output character HEX/ASCII
+        sendByte(x, buff[0]);
     }
     return 0;
 }
